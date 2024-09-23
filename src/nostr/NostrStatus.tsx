@@ -10,15 +10,23 @@ const NostrStatus: React.FC = () => {
     const [latestEvent, setLatestEvent] = useState<string | null>(null);
 
     useEffect(() => {
+        const storedNpub = localStorage.getItem('nostr_npub');
+        if (storedNpub) {
+            setNpub(storedNpub);
+            // You might want to fetch the user profile here as well
+        }
         const handleLoginSuccess = async (key: string) => {
+            
             setPubkey(key);
             const formattedNpub = pubkeyToNpub(key);
             setNpub(formattedNpub);
             const profile = await getUserProfile(key);
             setUserName(profile.name || null); // Set userName to null if not available
             setUserPicture(profile.picture || null);
+            localStorage.setItem('nostr_npub', formattedNpub);
             subscribeToUserEvents(key, (event) => {
                 setLatestEvent(JSON.stringify(event, null, 2));
+            
             });
 
             // Save user data after fetching the profile
@@ -26,6 +34,7 @@ const NostrStatus: React.FC = () => {
         };
 
         const handleLogout = () => {
+            localStorage.removeItem('nostr_npub');
             setPubkey(null);
             setNpub(null);
             setUserName(null);

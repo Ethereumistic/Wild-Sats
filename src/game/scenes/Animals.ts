@@ -36,7 +36,11 @@ export class Animals extends Scene {
         this.npub = localStorage.getItem('nostr_npub');
         if (!this.npub) {
             console.error('User not logged in');
-            this.scene.start('Shop');
+            this.showMessage('Please log in to access the Animals shop', '#ff0000');
+            // Add a slight delay before redirecting to ensure the message is shown
+            this.time.delayedCall(2000, () => {
+                this.scene.start('MainMenu');
+            });
         }
     }
 

@@ -1,6 +1,6 @@
 import { GameObjects, Scene } from 'phaser';
 import { EventBus } from '../EventBus';
-import { loginWithNostr, logout, saveUserData } from '../../nostr/LoginWithNostr';
+import { loginWithNostr, logout, saveUserData, pubkeyToNpub } from '../../nostr/LoginWithNostr';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import NostrStatus from '../../nostr/NostrStatus';
@@ -64,6 +64,9 @@ export class MainMenu extends Scene
     }
 
     onLoginSuccess(pubkey: string) {
+        const npub = pubkeyToNpub(pubkey); // Make sure to import pubkeyToNpub
+        localStorage.setItem('nostr_npub', npub);
+
         this.loginButton.setVisible(false);
     
         this.joinGameButton = this.add.text(512, 580, 'Join Game', {
@@ -79,6 +82,8 @@ export class MainMenu extends Scene
         this.shopButton.on('pointerdown', () => {
             this.scene.start('Shop'); // Start the Shop scene
         });
+
+        
     
         this.logoutButton = this.add.text(512, 700, 'Log Out', {
             fontFamily: 'Arial', fontSize: 24, color: '#ffffff',
@@ -97,6 +102,7 @@ export class MainMenu extends Scene
 
     onLogout()
     {
+        localStorage.removeItem('nostr_npub');
         this.loginButton.setVisible(true);
 
         if (this.joinGameButton) this.joinGameButton.destroy();

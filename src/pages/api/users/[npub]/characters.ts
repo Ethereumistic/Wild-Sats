@@ -1,9 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectToDatabase } from '../../../../../lib/mongodb';
 
+function authenticateUser(req: NextApiRequest, res: NextApiResponse, next: () => void) {
+  const { npub } = req.query;
+  if (!npub) {
+      return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, query } = req;
-  const { npub } = query;
+  // Use the middleware
+  authenticateUser(req, res, async () => {
+      const { method, query } = req;
+      const { npub } = query;
 
   if (method === 'GET') {
     try {
@@ -51,4 +61,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${method} Not Allowed`);
   }
+});
 }
