@@ -88,7 +88,7 @@ export class Animals extends Scene {
         }
     
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
             const response = await axios.get(`${apiUrl}/users/${this.npub}/characters`);
             this.ownedAnimals = response.data.characters;
         } catch (error) {
@@ -97,16 +97,17 @@ export class Animals extends Scene {
             this.showMessage('Failed to fetch owned animals. Please try again.', '#ff0000');
         }
     }
-
+    
     async handleAction() {
         const animal = this.animals[this.currentAnimalIndex];
         if (this.ownedAnimals.includes(animal.name)) {
             return; // Do nothing if already owned
         }
-
-        const url = `http://localhost:8080/api/users/${this.npub}/buy-animal`;
+    
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+        const url = `${apiUrl}/users/${this.npub}/buy-animal`;
         const data = { animal: animal.name };
-
+    
         try {
             const response = await axios.post(url, data);
             if (response.data.success) {
