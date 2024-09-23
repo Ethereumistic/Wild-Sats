@@ -4,10 +4,6 @@ import axios from 'axios';
 
 let ndk: NDK;
 
-function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // Initialize NDK with specified relay URLs
 export async function initializeNDK() {
     if (!ndk) {
@@ -82,7 +78,6 @@ export async function getUserProfile(pubkey: string): Promise<{ name?: string; p
 
 // Save user data to the database
 export async function saveUserData(nostrName: string | undefined, pubkey: string) {
-    await delay(3000);
 
     const formattedPubkey = pubkeyToNpub(pubkey);
     const nameToSave = nostrName || "Anonymous";
